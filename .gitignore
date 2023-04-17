@@ -1,41 +1,48 @@
-# Compiled Lua sources
-luac.out
+getrenv().Config = {
+  ["Keybind"] = "z",
+  ["Notification"] = true
+}
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+local lp = game.Players.LocalPlayer
+local plr = game:GetService("Players").LocalPlayer
+local mouse = plr:GetMouse()
+local enabled = false
 
-# Object files
-*.o
-*.os
-*.ko
-*.obj
-*.elf
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
+mouse.KeyDown:Connect(function(fd)
+  if Config.Keybind == string.lower(fd) then
+      if enabled == true then
+          enabled = false
+          if getgenv().Config.Notification == true then
+          game.StarterGui:SetCore("SendNotification", {
+            Title = "Network lag",
+            Text = "sixware ontop -- Disabled",
+            Icon = "rbxassetid://11993899000",
+            Duration = 3,
+            })
+          end
+      else
+          enabled = true
+          if getgenv().Config.Notification == true then
+          game.StarterGui:SetCore("SendNotification", {
+            Title = "Network lag",
+            Text = "sixware ontop -- Enabled",
+            Icon = "rbxassetid://11993899000",
+            Duration = 3,
+            })
+          end
+      end
+  end
+end)
+while task.wait() do
+  if enabled == true then
+  local loop = game:GetService("RunService").Heartbeat:Connect(function()
+      setfflag("S2PhysicsSenderRate", math.pi * 10)
+      setfflag("PhysicsSenderMaxBandwidthBps", math.pi * 10)
+      sethiddenproperty(lp.Character.HumanoidRootPart, "NetworkIsSleeping", true)
+      task.wait(30)
+      sethiddenproperty(lp.Character.HumanoidRootPart, "NetworkIsSleeping", false)
+  end)
+  task.wait(0.01)
+  loop:Disconnect()
+  end
+end
